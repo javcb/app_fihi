@@ -1,0 +1,56 @@
+﻿from flask import Flask, render_template_string, jsonify
+import subprocess
+import threading
+import sys
+import os
+
+app = Flask(__name__)
+
+# Global variable to store script output
+script_output = ""
+
+def run_script_in_background():
+    global script_output
+    script_path = "C:\\Users\\amrjb\\OneDrive\\1_Dev\\2_Web app2\\a_config\\a_1_pip_installs.py"
+    process = subprocess.Popen([sys.executable, script_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, error = process.communicate()
+    script_output = output.decode('utf-8') + error.decode('utf-8')
+
+@app.route('/')
+def index():
+    return render_template_string('''
+<html>
+<head>
+    <title>Run Python Script</title>
+    <script type="text/javascript">
+                function refreshUntilComplete() {
+                    fetch('/check-status')
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.running) {
+                                setTimeout(refreshUntilComplete, 1000); // Check every second
+                            } else {
+                                document.getElementById("output").innerText = data.output;
+                            }
+                        });
+                }
+                refreshUntilComplete();
+    </script>
+</head>
+<body>
+    <h1>Run Python Script</h1>
+    <p>Click the link below to execute the Python script:</p>
+    <a href="/run-script">Run a_1_pip_installs.py</a>
+    <pre id="output">Script output will appear here...</pre>
+</body>
+</html>
+    ''')
+
+@app.route('/run-script')
+def run_script():
+    threading.Thread(target=run_script_in_background).start()
+    return "Script is running in the background. Please wait for it to complete."
+
+@app.route('/check-status')
+def check_status():
+    global

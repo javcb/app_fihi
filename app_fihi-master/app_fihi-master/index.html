@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdventureWorks Web App</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.2.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tableexport/5.2.0/css/tableexport.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>AdventureWorks Data (Stored Procedure)</h1>
+        <table id="stored-proc-table" class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>BusinessEntityID</th>
+                    <th>FirstName</th>
+                    <th>LastName</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <h1>AdventureWorks Data (Table)</h1>
+        <table id="editable-table" class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>BusinessEntityID</th>
+                    <th>FirstName</th>
+                    <th>LastName</th>
+                </tr>
+            </thead>
+            <tbody contenteditable="true"></tbody>
+        </table>
+        <h1>Weather Data</h1>
+        <div id="weather-data"></div>
+        <div>
+            <h1>Power BI Visualization</h1>
+            <iframe width="600" height="400" src="https://app.powerbi.com/view?r=YOUR_EMBED_URL_HERE" frameborder="0" allowFullScreen="true"></iframe>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tableexport/5.2.0/js/tableexport.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Fetch and display AdventureWorks data (Stored Procedure)
+            $.get('fetch_adventureworks_data.py', function (data) {
+                let tableBody = $('#stored-proc-table tbody');
+                data.forEach(row => {
+                    let newRow = '<tr>';
+                    newRow += '<td>' + row.BusinessEntityID + '</td>';
+                    newRow += '<td>' + row.FirstName + '</td>';
+                    newRow += '<td>' + row.LastName + '</td>';
+                    newRow += '</tr>';
+                    tableBody.append(newRow);
+                });
+            });
+
+            // Fetch and display AdventureWorks data (Table)
+            $.get('fetch_adventureworks_data.py', function (data) {
+                let tableBody = $('#editable-table tbody');
+                data.forEach(row => {
+                    let newRow = '<tr>';
+                    newRow += '<td>' + row.BusinessEntityID + '</td>';
+                    newRow += '<td>' + row.FirstName + '</td>';
+                    newRow += '<td>' + row.LastName + '</td>';
+                    newRow += '</tr>';
+                    tableBody.append(newRow);
+                });
+            });
+
+            // Fetch and display weather data
+            $.get('fetch_weather_data.py?city=London', function (data) {
+                let weatherDiv = $('#weather-data');
+                weatherDiv.append('<p>Temperature: ' + data.main.temp + '°C</p>');
+                weatherDiv.append('<p>Weather: ' + data.weather[0].description + '</p>');
+            });
+
+            // Export table data
+            $('#stored-proc-table').tableExport({
+                formats: ["json", "csv", "xlsx", "sql"],    // Specify the export formats
+                position: 'top',                             // Toolbar position
+                bootstrap: true,                             // Use Bootstrap for styling
+                fileName: 'StoredProcData',                  // Default file name
+            });
+
+            $('#editable-table').tableExport({
+                formats: ["json", "csv", "xlsx", "sql"],    // Specify the export formats
+                position: 'top',                             // Toolbar position
+                bootstrap: true,                             // Use Bootstrap for styling
+                fileName: 'EditableTableData',               // Default file name
+            });
+        });
+    </script>
+</body>
+</html>
