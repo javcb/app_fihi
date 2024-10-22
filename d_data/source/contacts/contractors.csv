@@ -1,0 +1,5 @@
+FamilyGroup,FirstName,LastName,Address,City,State,ZipCode,Country,Phone,BirthDate,Comments,Sex,Birthdate
+Smith Family,John,Smith,101 Vinton Road,Madison,NJ,07940,USA,,,,M,
+Rodgers Family,Joe,Rodgers,102 Sinton Road,Chatham,NJ,07940,USA,,,,M,
+Wilson Family,Kevin,Wilson,103 Linton Road,Morristown,NJ,07940,USA,,,,M,
+Appleby Family,Jack,Appleby,104 Pinton Road,Mendham,NJ,07940,USA,,,,M,
