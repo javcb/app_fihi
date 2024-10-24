@@ -5,6 +5,16 @@ import sys
 import traceback
 import pkgutil
 
+def install_package(package_name):
+    try:
+        subprocess.check_call([sys.executable, '-m', 'pip', 'install', package_name])
+    except subprocess.CalledProcessError as e:
+        print(f"Error installing {package_name}: {e}")
+
+# Step 1: Install necessary packages if not already installed
+install_package('pipreqs')
+install_package('pipdeptree')
+
 # Ensure setuptools is installed
 try:
     import pkg_resources
@@ -107,12 +117,38 @@ def main():
         for package in failed['other']:
             print(f"  - {package}")
 
+        # Step 2: Change directory to the relative path
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        relative_folder_path = os.path.join(script_dir, '..', 'app_fihi')
+        folder_path = os.path.normpath(relative_folder_path)
+        print(f"Changing directory to: {folder_path}")
+
+        os.chdir(folder_path)
+
+        # Step 3: Generate requirements.txt using pipreqs
+        subprocess.call([sys.executable, '-m', 'pipreqs', '.', '--force'])
+
+        # Step 4: Ensure all dependencies are included using pipdeptree
+        result = subprocess.check_output([sys.executable, '-m', 'pipdeptree', '--warn', 'silence'])
+        dependencies = set()
+        for line in result.decode('utf-8').split('\n'):
+            if '==' in line:
+                package = line.split('==')[0].strip()
+                dependencies.add(package)
+
+        # Step 5: Append missing dependencies to requirements.txt
+        with open('requirements.txt', 'a') as f:
+            for package in dependencies:
+                f.write(f'\n{package}\n')
+
+        # Step 6: Update all packages using pip-review
+        subprocess.call([sys.executable, '-m', 'pip-review', '--auto'])
+
         print("All required packages have been processed.")
 
     except Exception as e:
-        print(f"An unexpected error occurred: {e}")
+        print(f"An error occurred: {e}")
         traceback.print_exc()
 
 if __name__ == "__main__":
     main()
-

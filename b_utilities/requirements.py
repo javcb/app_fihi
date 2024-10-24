@@ -12,8 +12,13 @@ def install_package(package_name):
 install_package('pipreqs')
 install_package('pip-review')
 
-# Step 2: Change directory
-os.chdir("C:\\Users\\amrjb\\OneDrive\\01_Dev\\02_Web_apps") # todo: update to relative path
+# Step 2: Change directory to the relative path
+script_dir = os.path.dirname(os.path.abspath(__file__))
+relative_folder_path = os.path.join(script_dir, '..', 'app_fihi')
+folder_path = os.path.normpath(relative_folder_path)
+print(f"Changing directory to: {folder_path}")
+
+os.chdir(folder_path)
 
 # Step 3: Generate requirements.txt using python -m pipreqs
 subprocess.call([sys.executable, '-m', 'pipreqs', '.', '--force'])

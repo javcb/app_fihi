@@ -1,0 +1,7 @@
+[config]
+uri = https://client031.layeronesoftware.com:8085/POne/
+login = svcRestApi031@client031cloud.onmicrosoft.com
+pass = DG1fL(x*KgOJ
+tenant = https://login.microsoftonline.com/organizations
+clientId = 2d3dec58-6fa8-4453-accd-5956dad5a881
+scope = api://2d3dec58-6fa8-4453-accd-5956dad5a881/Api.Read
